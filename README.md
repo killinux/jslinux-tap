@@ -1,4 +1,3 @@
-# jslinux-.tap
 参考这个代码 https://github.com/levskaya/jslinux-deobfuscated 这个没有网络
 加了硬盘和网络的部分
 硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 https://www.iteye.com/blog/haoningabc-2240076
@@ -26,7 +25,8 @@ brctl show
 这里是在jslinux内部建立tap设备，并通过 PCEmulator.js的serial2  调用network-websockets.js 的websocket进行交互
 
 主要原理就是
-jslinux-->
+jslinux:tap0--->PCEmulator.js:serial2--->network-websockets.js:websocket client----->python:tap_wsh.py的websocket server---->linux tap:websockettunt0 ---linux桥：br1
+通过桥实现多个jslinux的互通
 
 
 faq：
