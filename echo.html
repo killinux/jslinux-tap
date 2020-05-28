@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html>  
+<head>  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">  
+<title>Insert title here</title>  
+</head>  
+<script type="text/javascript">  
+    String.prototype.startWith=function(s){  
+      if(s==null||s==""||this.length==0||s.length>this.length)  
+       return false;  
+      if(this.substr(0,s.length)==s)  
+         return true;  
+      else  
+         return false;  
+      return true;  
+     }  
+    Date.prototype.format = function(format) {  
+        var o = {  
+            "M+" : this.getMonth() + 1, //month  
+            "d+" : this.getDate(), //day  
+            "h+" : this.getHours(), //hour  
+            "m+" : this.getMinutes(), //minute  
+            "s+" : this.getSeconds(), //second  
+            "q+" : Math.floor((this.getMonth() + 3) / 3), //quarter  
+            "S" : this.getMilliseconds()  
+        }  
+        if (/(y+)/.test(format))  
+            format = format.replace(RegExp.$1, (this.getFullYear() + "")  
+                    .substr(4 - RegExp.$1.length));  
+        for ( var k in o)  
+            if (new RegExp("(" + k + ")").test(format))  
+                format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]  
+                        : ("00" + o[k]).substr(("" + o[k]).length));  
+        return format;  
+    }  
+    var ws = null;  
+    function log(text) {  
+        /* document.getElementById("log").innerHTML = (new Date).getTime() + ": " 
+                + text + "<br>" + document.getElementById("log").innerHTML; */  
+        document.getElementById("log").innerHTML = new Date().format('yyyy-MM-dd hh:mm:ss') + ","  
+        + text + "<br>" + document.getElementById("log").innerHTML;  
+    }  
+    function enterSend(){  
+        if(event.keyCode == 13){  
+            document.getElementById("sendbtn").click();  
+        }  
+    }  
+    function startServer() {  
+        var url = document.getElementById("serverip").value;// "ws://192.168.0.102:8887";    
+        if ('WebSocket' in window) {  
+            ws = new WebSocket(url);  
+        } else if ('MozWebSocket' in window) {  
+            ws = new MozWebSocket(url);  
+        } else {  
+            log('浏览器不支持');  
+            return;  
+        }  
+        ws.onopen = function() {  
+            log('唷嘻，连上了');  
+        };  
+        // 收到服务器发送的文本消息, event.data表示文本内容    
+        ws.onmessage = function(event) {  
+            var thisdata = event.data;  
+            if(thisdata.startWith("open")){  
+                //alert(thisdata);  
+                document.getElementById("username").value=thisdata.split(" ")[1];  
+            }else{  
+                //log(event.data);  
+                var showData=event.data.split(",");  
+                log(showData[0]+"说:"+showData[2]);  
+            }  
+        };  
+        ws.onclose = function() {  
+            log('Closed! 刷新页面尝试连接.');  
+        }  
+    }  
+    function sendMessage() {  
+        var textMessage = document.getElementById("textMessage").value;  
+        var username = document.getElementById("username").value;  
+        var toUser = document.getElementById("toUser").value;;  
+        if (ws != null && textMessage != "") {  
+            ws.send(username+","+toUser+","+textMessage);  
+        }  
+        document.getElementById("textMessage").value="";  
+    }  
+    function stopconn() {  
+        ws.close();  
+    }  
+</script>  
+<body onload="startServer()">  
+     <input id="serverip" type="text" size="20"  
+        value="ws://13.231.152.115:3000/echo" />  
+      
+    </br>  
+    您的Id：<input id="username" type="text"  readonly/></br>  
+    to Id：<input id="toUser" type="text"  /> 如果为空则群发</br>   
+    <input id="textMessage" type="text" size="20" onkeydown="enterSend()"  style="border:1;width:400px"  />  
+    <input id="sendbtn" type="button" onclick="sendMessage()" value="Send">  
+    <div id="log"></div>  
+</body>  
+</html>  
