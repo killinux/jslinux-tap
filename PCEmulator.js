@@ -1072,7 +1072,7 @@ function PCEmulator(params) {
     this.serial = new Serial(this, 0x3f8, this.pic.set_irq.bind(this.pic, 4), params.serial_write);//hao gh
     
     this.serial2 = new Serial(this, 0x2f8, this.pic.set_irq.bind(this.pic, 3), params.serial2_write);//add by hao gh
-    
+   // /dev/ttyS1   is 0x2f8, /dev/ttyS0 is 0x3f8 ,https://books.google.com.hk/books?id=u7ZVYFu50hkC&pg=PA719&lpg=PA719&dq=0x2f8+/dev/ttyS1&source=bl&ots=IZRjCKGEGa&sig=ACfU3U0DNRadlUsVJejKNXo1m_5pYm8E3Q&hl=zh-CN&sa=X&redir_esc=y&sourceid=cndr#v=onepage&q=0x2f8&f=false
     this.kbd    = new KBD(this, this.reset.bind(this));
     this.reset_request = 0;
 // add by hao for ide and net begin

@@ -70,8 +70,9 @@ function get_shell(){
 
 <!--div id="copyright">&copy; 2011 Fabrice Bellard - <a href="news.html">News</a> - <a href="faq.html">FAQ</a> - <a href="tech.html">Technical notes</a></div-->
 <pre>
-说明:服务器在国外,国内用户第一次加载可能会慢，第二次会缓存数据，访问会快一点，浏览器chrome和火狐支持的比较好。
-支持多个浏览器网络互连的js版linux，内核2.6，有修改,代码在<a href="https://github.com/killinux/deobfuscated">http://github/killinux</a>
+
+说明:
+支持多个浏览器网络互连的js版linux，内核2.6，有修改,代码在<a href="https://github.com/killinux/jslinux-tap">https://github.com/killinux/jslinux-tap</a>
 内核建立tap设备通过websocket与底层连接,传输2层协议，底层python的服务端使用vxlan与openvswitch可以支持集群。
 页面network status显示网络状态，红色网络异常，请刷新页面，chrome的F12可以查看2层协议.
 测试方式：
@@ -85,8 +86,6 @@ ping 10.0.2.1
 ping 8.8.8.8
 #测试dns
 ping www.google.com
-#得到下图结果
-<img src="jslinux.png" ></img>
 
 </pre>
 <td><input type="button" value="Clear clipboard" onclick="clear_clipboard();"><br><textarea row="4" cols="16" id="text_clipboard"></textarea>
