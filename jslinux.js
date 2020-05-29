@@ -205,8 +205,9 @@ function start(kernel_name)
 
     if (!kernel_name)
         kernel_name = "vmlinux-2.6.20.bin";
+        //kernel_name = "vmlinux28.bin";
     pc.load_binary(kernel_name, 0x00100000, start2);
-    //console.log("start 2");
+    //console.log("start 2 vmlinux28.bin");
 }
 
 function start2(ret)
@@ -215,6 +216,7 @@ function start2(ret)
         return;
     init_state.start_addr = 0x10000;
     pc.load_binary("linuxstart.bin", init_state.start_addr, start3);
+    //console.log("linuxstart1.bin");
 }
 
 function start3(ret)
