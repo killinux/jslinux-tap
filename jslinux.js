@@ -197,6 +197,7 @@ function start(kernel_name)
     //params.hda = { url: "hda%d.bin", block_size: 64, nb_blocks: 912 };
     //params.hda = { url: "../jslinux-network/hda%d.bin", block_size: 64, nb_blocks: 912 };
     params.hda = { url: "hao/hda%d.bin", block_size: 64, nb_blocks: 912 };
+    //params.hda = { url: "hao1/hda%d.bin", block_size: 64, nb_blocks: 912 };
     //params.hdb = { url: "hdb%d.bin", block_size: 64, nb_blocks: 912 };
     
     pc = new PCEmulator(params);

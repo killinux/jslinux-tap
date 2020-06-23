@@ -1,12 +1,18 @@
-参考这个代码 https://github.com/levskaya/jslinux-deobfuscated 这个没有网络
-加了硬盘和网络的部分
+参考 https://bellard.org/jslinux 这个已经变成wasm的版本
+这个代码还是老代码，仅供学习用
+部分代码参考 https://github.com/levskaya/jslinux-deobfuscated
+https://github.com/levskaya/jslinux-deobfuscated 这个没有网络
+增加了硬盘和网络的部分
 硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 https://www.iteye.com/blog/haoningabc-2240076
 
 运行：
 
+网络部分说明：
+通过websocket作为server，浏览器中linux的tap设备与服务器端通信
 
+运行方法：
 1、准备：
-cd websocketstuntap
+cd jslinux/websocketstuntap
 yum install python-virtualenv -y
 virtualenv mysite
 source mysite/bin/activate
@@ -17,6 +23,14 @@ brctl show
 注意设置 MASQUERADE 和 ip_forward 的转发
 
 2.启动 websocketstuntap 的websocket服务：这个服务生成tap设备和websocket的关联，并把tap设备都挂在br1桥上，是jslinux之间互相通信的基础
+brctl addbr br1
+brctl stp br1 on
+ip link set br1 promisc on
+ip link set br1 up
+ifconfig br1 hw ether ee:ee:ee:ee:ee:50
+需要指定mac地址，否则每次新建tap这个mac会变成最新的，影响网络交互
+ifconfig br1 10.0.2.1 netmask 255.0.0.0 up
+
 3.jslinux-tap/js/network-websockets.js
 中的WebSocket server 修改成刚建立的websocket服务
 
@@ -70,6 +84,20 @@ faq：
 hdb ,第二块硬盘怎么建立？
 
 
-
+说明:
+支持多个浏览器网络互连的js版linux，内核2.6，有修改,代码在<a href="https://github.com/killinux/jslinux-tap">https://github.com/killinux/jslinux-tap</a>
+内核建立tap设备通过websocket与底层连接,传输2层协议，底层python的服务端使用vxlan与openvswitch可以支持集群。
+页面network status显示网络状态，红色网络异常，请刷新页面，chrome的F12可以查看2层协议.
+测试方式：
+在命令行输入：
+ifconfig
+cat /dev/clipboard |sh
+#建立tap设备与websocket通信
+ifconfig
+ping 10.0.2.1
+#测试网关
+ping 8.8.8.8
+#测试dns
+ping www.baidu.com
 
 
