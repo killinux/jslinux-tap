@@ -1,6 +1,6 @@
 本文代码在：[https://github.com/killinux/jslinux-tap](https://github.com/killinux/jslinux-tap)
 测试demo在：[http://www.hackernel.com/jslinux/](http://www.hackernel.com/jslinux/)
-
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200624024311662.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlYWZyZW5jaGxlYWY=,size_16,color_FFFFFF,t_70#pic_center)
 
 11年很火的jslinux，把linux跑在浏览器上，10年过去了，还有人记得这个么？
 这个代码参考了大神fabrice bellard的代码，版权归作者所有。
