@@ -10,15 +10,17 @@ fabrice bellard官网是： [https://bellard.org/jslinux](https://bellard.org/js
  这个没有网络，硬盘也没这么大，但是代码可读。 
  
  
-**我修改了哪些**：
-1.增加了硬盘部分：
-硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 [https://www.iteye.com/blog/haoningabc-2240076](https://www.iteye.com/blog/haoningabc-2240076)  
-理论上如果用indexeddb作为硬盘，硬盘应该可以更大，后续计划把browserfs加上。
-2.增加了网络部分：通过websocket作为server，浏览器中linux的tap设备与服务器端通信，这个地方需要改内核编译的配置，内核的config选项一定要把TUN=yes  
+**我修改了哪些**：  
+1.**增加了硬盘部分**：  
+硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 [修改jslinux硬盘内容](https://www.iteye.com/blog/haoningabc-2240076)  
+理论上如果用indexeddb作为硬盘，硬盘应该可以更大，后续计划把browserfs加上。  
+2.**增加了网络部分**：通过websocket作为server，浏览器中linux的tap设备与服务器端通信，这个地方需要改内核编译的配置，内核的config选项一定要把TUN=yes  
+<pre>
 网络为三个部分：  
-      1.jslinux内部网络是建立tap设备，和/dev/ttyS1设备交互，这是jslinux和浏览器交互的部分  ，类似/dev/clipboard 和浏览器上的textare交互  
-      2.浏览器和server用websocket链接    
-      3.server端linux也是同样原理，建立一个桥，tap设备一端绑在桥上，一端连在websocket上  
+      （1）jslinux内部网络是建立tap设备，和/dev/ttyS1设备交互，这是jslinux和浏览器交互的部分  ，类似/dev/clipboard 和浏览器上的textare交互  ,建立tap设备的代码为 [tap代码链接](https://www.iteye.com/blog/haoningabc-2436305)
+      （2）浏览器和server用websocket链接    
+      （3）server端linux也是同样原理，建立一个桥，tap设备一端绑在桥上，一端连在websocket上  
+ </pre>
 
 
 **把代码运行起来**：
@@ -89,7 +91,21 @@ vm:tcpdump -i websockettunt0
 2. 服务端的代码在哪？
 答：jslinux-tap/websocketstuntap的下面，使用的mod_pywebsocket  
 3.jslinux里面这么和浏览器交互： 
-答：
+答：通过textarea，这部分需要内核驱动支持，
+代码在[https://github.com/killinux/jslinux-kernel/](https://github.com/killinux/jslinux-kernel/) 的src/patch_linux-2.6.20里，定义了jsclipboard这个设备，对应在jslinux里的/dev/clipboard
+想把内容从jslinux传到浏览器的textarea就使用
+```shell
+echo "haha" >/dev/clipboard
+```
+如果想从浏览器传到jslinux里，
+在textarea修改内容后 ，
+```shell
+cat /dev/clipboard
+```
+jslinux里面的网络设备就是通过这个建立的
+```shell
+cat /dev/clipboard |sh
+```
 4.如果我想重新编译内核这么办：
 答：具体参考 [https://www.iteye.com/blog/haoningabc-2338061](https://www.iteye.com/blog/haoningabc-2338061)
 目前用2.6.20内核需要一些补丁，补丁的代码在代码在 [https://github.com/killinux/jslinux-kernel](https://github.com/killinux/jslinux-kernel)  
