@@ -1,10 +1,7 @@
  /*
-   Javascript Terminal
-
-   Copyright (c) 2011 Fabrice Bellard
-
-   Redistribution or commercial use is prohibited without the author's
-   permission.
+add by hao:
+终端的模拟器
+这部分有很多开源项目可以替代
 */
 "use strict";
 if (!Function.prototype.bind) {

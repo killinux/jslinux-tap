@@ -1,10 +1,6 @@
 /* 
-   Javascript Utilities
-
-   Copyright (c) 2011-2012 Fabrice Bellard
-
-   Redistribution or commercial use is prohibited without the author's
-   permission.
+add by hao:
+一些同步异步的工具类，这些是没有es6的情况下的一些hack，目前用promise都能更优雅的解决
 */
 "use strict";
 

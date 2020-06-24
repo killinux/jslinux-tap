@@ -1,15 +1,9 @@
-/* 
-   Linux launcher
-
-   Copyright (c) 2011-2012 Fabrice Bellard
-
-   Redistribution or commercial use is prohibited without the author's
-   permission.
-*/
 "use strict";
 
 var term, pc, boot_start_time, init_state;
-
+/*
+add by hao 终端的代码
+*/
 function term_start()
 {
     term = new Term(80, 30, term_handler);
@@ -22,7 +16,7 @@ function term_handler(str)
 {
     try
     {
-        pc.serial.send_chars(str);
+        pc.serial.send_chars(str);//add by hao,这里和/dev/clipboard交互 
     }
     catch(e)
     {
@@ -31,12 +25,12 @@ function term_handler(str)
 }
 var net_handler = function net_handler(str)
 {
-    // FIXME: name this more appropriately.
+    // add by hao: 网络交互的核心内容,红黄交替代表网络可用，红色说明websocket已经断了
     console.error("netrecv " + window.btoa(str));
     document.getElementById("test_serial2").style.backgroundColor = "yellow";
-    pc.serial2.send_chars(str);
+    pc.serial2.send_chars(str);//add by hao,这个对应设备 /dev/ttyS1
 
-    if (0)//hao show network tcpdump
+    if (0)//add by hao ,show network tcpdump 这个地方打开性能会变好,但是没有网络协议的调试内容了
     {
         var data = str.slice(2);
         //console.log("receiving " + data);
@@ -69,7 +63,7 @@ function hexy(s) {
     return pad(s.toString(16), 2, '0')
 }
 
-function tcpdump_uint8array(data) {
+function tcpdump_uint8array(data) {  //add by hao,打印网络协议，目前支持的协议不多
 try {
 	console.log("dest: " + 
 			hexy(data[0]) + ":" +
@@ -152,6 +146,11 @@ function start(kernel_name)
     
     params.serial2_write = function(data)
     {
+        /*
+                add by hao,
+                这个地方是把jslinux的 /dev/ttyS1设备传来的数据转给websocket，和server端的tap设备进行通信
+                这里是核心交互代码
+        */
     	//console.log("--->serial2_write");
         /*
     	document.getElementById("test_serial2").innerHTML = character;
@@ -193,17 +192,19 @@ function start(kernel_name)
 
     /* IDE drive. The raw disk image is split into files of
      * 'block_size' KB. 
+     * add by hao:
+     *      硬盘的加载部分，把大硬盘拆分成小块，加载时可以有限加载部分代码，降低网络延迟
+     *      todo1:这部分后续计划改造成indexedDB ,来加快第二次访问的速度
+     *      todo2:计划改造成browserfs的方式做文件系统
      */
+
     //params.hda = { url: "hda%d.bin", block_size: 64, nb_blocks: 912 };
-    //params.hda = { url: "../jslinux-network/hda%d.bin", block_size: 64, nb_blocks: 912 };
     params.hda = { url: "hao/hda%d.bin", block_size: 64, nb_blocks: 912 };
-    //params.hda = { url: "hao1/hda%d.bin", block_size: 64, nb_blocks: 912 };
-    //params.hdb = { url: "hdb%d.bin", block_size: 64, nb_blocks: 912 };
     
-    pc = new PCEmulator(params);
+    pc = new PCEmulator(params);//add by hao ,新建模拟器， 代码从这里开始读
 //	console.log("start 1");
     init_state.params = params;
-
+    //add by hao: load the kernel
     if (!kernel_name)
         kernel_name = "vmlinux-2.6.20.bin";
         //kernel_name = "vmlinux28.bin";
@@ -213,6 +214,7 @@ function start(kernel_name)
 
 function start2(ret)
 {
+    //add by hao ,加载初始文件，这个文件会从0x10000位置开始加载内核，在编译内核的时候指定的
     if (ret < 0)
         return;
     init_state.start_addr = 0x10000;

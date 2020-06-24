@@ -1,9 +1,9 @@
 /*
-  JSLinux-deobfuscated - An annotated version of the original JSLinux.
+  JSLinux-tap - An annotated version of the original JSLinux.
 
   Original is Copyright (c) 2011-2012 Fabrice Bellard
   Redistribution or commercial use is prohibited without the author's permission.
-
+  add by hao:use the driver of 8259A
   8259A PIC (Programmable Interrupt Controller) Emulation Code
 
   The 8259 combines multiple interrupt input sources into a single

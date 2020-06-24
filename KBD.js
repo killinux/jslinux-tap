@@ -1,10 +1,6 @@
 /*
-JSLinux-deobfuscated - An annotated version of the original JSLinux.
-
-Original is Copyright (c) 2011-2012 Fabrice Bellard
-Redistribution or commercial use is prohibited without the author's permission.
-
 Keyboard Device Emulator
+add by hao:键盘io的交互代码
 */
 function KBD(PC, reset_callback) {
     PC.register_ioport_read(0x64, 1, 1, this.read_status.bind(this));

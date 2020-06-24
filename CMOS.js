@@ -1,15 +1,12 @@
 /*
-  JSLinux-deobfuscated - An annotated version of the original JSLinux.
-
-  Original is Copyright (c) 2011-2012 Fabrice Bellard
-  Redistribution or commercial use is prohibited without the author's permission.
-
   CMOS Ram Memory, actually just the RTC Clock Emulator
 
   Useful references:
   ------------------
   http://www.bioscentral.com/misc/cmosmap.htm
   http://wiki.osdev.org/CMOS
+  add by hao:
+        cmos的核心模拟代码
 */
 
 /*

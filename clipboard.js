@@ -1,10 +1,6 @@
 /*
-JSLinux-deobfuscated - An annotated version of the original JSLinux.
-
-Original is Copyright (c) 2011-2012 Fabrice Bellard
-Redistribution or commercial use is prohibited without the author's permission.
-
-Clipboard Device
+add by hao :
+clipboard.js 是剪切板交互io的核心代码,对应设备/dev/clipboard
 */
 function clipboard_device(Ng, Zf, rh, lh, sh) {
     Ng.register_ioport_read(Zf, 16, 4, this.ioport_readl.bind(this));

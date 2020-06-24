@@ -1,8 +1,8 @@
 /*
-JSLinux-deobfuscated - An annotated version of the original JSLinux.
-
-Original is Copyright (c) 2011-2012 Fabrice Bellard
-Redistribution or commercial use is prohibited without the author's permission.
+add by hao :
+    1.修改了部分驱动和网络链接websocket的部分
+    2.修改了load_binary,加载linuxstart.bin和内核的加载函数，有先后顺序，后续可以重构成promise的版本
+    3.这部分代码最好结合《深入理解linux内核架构》一起学习
 
 A x86 CPU (circa 486 sans FPU) Emulator
 ======================================================================
@@ -18,8 +18,9 @@ http://en.wikipedia.org/wiki/X86
 http://en.wikipedia.org/wiki/Control_register
 http://en.wikipedia.org/wiki/X86_assembly_language
 http://en.wikipedia.org/wiki/Translation_lookaside_buffer
-
+原版是这个
 http://bellard.org/jslinux/tech.html :
+但是这个目前已经是wasm的版本了，当前版本还是纯js的，提供linux内核学习使用
 The exact restrictions of the emulated CPU are:
 - No FPU/MMX/SSE
 - No segment limit and right checks when accessing memory
@@ -513,7 +514,7 @@ CPU_X86.prototype.dump = function() {
             str += " ";
         }
     }
-    descriptor_table = this.gdt;//hao 
+    descriptor_table = this.gdt;//add by hao ,这里定义linux内核的GDT和IDT
     str = "GDT=     " + _4_bytes_(descriptor_table.base) + " " + _4_bytes_(descriptor_table.limit) + "      ";
     descriptor_table = this.idt;
     str += "IDT=     " + _4_bytes_(descriptor_table.base) + " " + _4_bytes_(descriptor_table.limit);
@@ -2930,7 +2931,7 @@ CPU_X86.prototype.exec_internal = function(N_cycles, interrupt) {
                                     n++;
                                     break;
                                 default:
-                                    n += 2;//hao
+                                    n += 2;//add by hao,cs处理器的默认操作
                                     break;
                             }
                         } else {
@@ -3992,7 +3993,8 @@ CPU_X86.prototype.exec_internal = function(N_cycles, interrupt) {
         cpu.segs[1].base = (selector << 4);
         cpu.eflags &= ~(0x00000200 | 0x00000100 | 0x00040000 | 0x00010000);
     }
-    function do_interrupt(intno, ne, error_code, oe, pe) {//hao
+    function do_interrupt(intno, ne, error_code, oe, pe) {
+        //add by hao:中断的定义,这部分可以参考《深入理解linux内核架构》那本书一起学习
         if (intno == 0x06) {
             var eip_tmp = eip;
             var eip_offset;
@@ -4823,8 +4825,8 @@ CPU_X86.prototype.exec_internal = function(N_cycles, interrupt) {
         }
         return 1;
     }
-//hao: Verify a Segment for Reading or Writing
-//https://pdos.csail.mit.edu/6.828/2005/readings/i386/VERR.htm
+//add by hao: Verify a Segment for Reading or Writing
+//参考 https://pdos.csail.mit.edu/6.828/2005/readings/i386/VERR.htm
     function op_VERR_VERW(selector, is_verw) {
         var z;
         z = segment_isnt_accessible(selector, is_verw);
@@ -9709,7 +9711,7 @@ CPU_X86.prototype.exec = function(N_cycles) {
   ==========================================================================================
   This routine loads a binary array into memory.
 */
-//hao
+//delete by hao, 这里是老版本，不能支持大硬盘，修改了这里的代码,加入一个传递参数，其实这里修改成promise其实更优雅
 /*CPU_X86.prototype.load_binary = function(binary_array, mem8_loc) {
   var len, i, typed_binary_array;
   len = binary_array.byteLength;

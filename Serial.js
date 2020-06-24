@@ -1,10 +1,12 @@
 /*
-JSLinux-deobfuscated - An annotated version of the original JSLinux.
+JSLinux-tap - An annotated version of the original JSLinux.
 
 Original is Copyright (c) 2011-2012 Fabrice Bellard
 Redistribution or commercial use is prohibited without the author's permission.
 
 Serial Controller Emulator
+add by hao:
+     串口的驱动,设备/dev/clipboard 用串口驱动链接浏览器部分的代码,参考编译内核的jsclipboard部分
 */
 
 function Serial(Ng, mem8_loc, kh, lh) {

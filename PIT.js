@@ -1,9 +1,9 @@
 /*
-  JSLinux-deobfuscated - An annotated version of the original JSLinux.
+  JSLinux-tap - An annotated version of the original JSLinux.
 
   Original is Copyright (c) 2011-2012 Fabrice Bellard
   Redistribution or commercial use is prohibited without the author's permission.
-
+  add by hao : use the driver of 8254
   8254 Programmble Interrupt Timer Emulator
 
   Useful References

@@ -1,10 +1,6 @@
 /*
-JSLinux-deobfuscated - An annotated version of the original JSLinux.
-
-Original is Copyright (c) 2011-2012 Fabrice Bellard
-Redistribution or commercial use is prohibited without the author's permission.
-
-Main PC Emulator Routine
+add by hao
+模拟器的核心代码
 */
 
 // used as callback wrappers for emulated PIT and PIC chips
@@ -266,6 +262,7 @@ pc_disk.prototype.exec_cmd = function(ga) {
 //add by hao sector end
 
 //add by hao ide0 begin
+// ide硬盘相关的核心代码,部分混淆的代码没有修正
 //////////////ide_driver
 ide_driver.prototype.ioport_write = function(fa, ga) {
     var s = this.cur_drive;
@@ -994,7 +991,7 @@ network_driver.prototype.reset_ioport_read = function(fa) {
     this.reset();
 };
 
-function network_driver(this_pc, base, set_irq_function, arr, send_function) {//hao network
+function network_driver(this_pc, base, set_irq_function, arr, send_function) {//hao network,网络驱动
     var i;
     this.set_irq_func = set_irq_function;
     this.send_packet_func = send_function;
