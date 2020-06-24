@@ -7,8 +7,8 @@
 官网是： [https://bellard.org/jslinux](https://bellard.org/jslinux) 这个已经变成wasm的版本，所以目前这个纯js版的作为学习Linux内核的教程还是很好的。
 没混淆的jslinux参考： [https://github.com/levskaya/jslinux-deobfuscated](https://github.com/levskaya/jslinux-deobfuscated)
  这个没有网络，但是代码可读。
-
-
+ 
+ 
 **我修改了哪些**：
 1.增加了硬盘部分
 硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 [https://www.iteye.com/blog/haoningabc-2240076](https://www.iteye.com/blog/haoningabc-2240076)
@@ -83,29 +83,38 @@ vm:tcpdump -i websockettunt0
 
 
 
-**其他可能的想法：**
-1、改成webrtc的版本，未实现。   
+**其他可能的想法：**  
+1、改成webrtc的版本，未实现。 
 2、单桥多vm互通，已解决  
 3、net0其实没用，用serial2传的数据  
 4、硬盘问题：大文件加载后到indexdb  
 5、回写问题，如何保存，如何同步？  
 6、开机状态迁移，内存怎么保存和移动？？？？  
-hdb ,第二块硬盘怎么建立？   
-
+hdb ,第二块硬盘怎么建立？  
 
 
 **其他说明:**
 
-内核建立tap设备通过websocket与底层连接,传输2层协议，底层python的服务端使用vxlan与openvswitch可以支持集群。
-页面network status显示网络状态，红色网络异常，请刷新页面，chrome的F12可以查看2层协议.
-测试方式：
-在命令行输入：
-ifconfig
-cat /dev/clipboard |sh
-#建立tap设备与websocket通信
-ifconfig
-ping 10.0.2.1
-#测试网关
-ping 8.8.8.8
-#测试dns
+1.内核建立tap设备通过websocket与底层连接,传输2层协议，  
+2.底层python的服务端使用vxlan与openvswitch可以支持集群。   
+3.页面network status显示网络状态，红色网络异常，请刷新页面，
+4.chrome的开发者工具可以查看2层协议.    
+
+**测试方式**：  
+在命令行输入：    
+ifconfig    
+如果手动建立tap设备  
+```shell
+cat /dev/clipboard |sh  
+```
+建立tap设备与websocket通信 
+测试网关  
+```shell
+ifconfig  
+ping 10.0.2.1  
+```
+测试dns  
+ping 8.8.8.8  
+
 ping www.baidu.com
+
