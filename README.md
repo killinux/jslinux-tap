@@ -66,31 +66,49 @@ stty -F /dev/ttyS1 -ignbrk -brkint -parmrk -istrip -inlcr -igncr -icrnl -ixon -o
 
 
 **主要原理是**
-jslinux:/dev/ttyS1----->:jslinux:tap0--->PCEmulator.js:serial2(0x2f8)--->network-websockets.js:websocket client----->python:tap_wsh.py的websocket server---->linux tap:websockettunt0 ---linux桥：br1
+```shell
+jslinux:/dev/ttyS1
+  ----->
+    jslinux:tap0
+      ----->
+        PCEmulator.js:serial2(0x2f8)
+          ----->
+             network-websockets.js:websocket client
+               ----->
+                 python:tap_wsh.py:websocket server
+                   ----->
+                     linux tap:websockettunt0 
+                       ----->
+                         linux桥：br1
 通过桥实现多个jslinux的互通：
+```
 
 
 /dev/ttyS1 对应 com口，序列号 0x2f8  
 参考：[google定义的设备号](https://books.google.com.hk/books?id=u7ZVYFu50hkC&pg=PA719&lpg=PA719&dq=0x2f8%20/dev/ttyS1&source=bl&ots=IZRjCKGEGa&sig=ACfU3U0DNRadlUsVJejKNXo1m_5pYm8E3Q&hl=zh-CN&sa=X&redir_esc=y&sourceid=cndr#v=onepage&q=0x2f8&f=false)
 
-jslinux:
+jslinux 网络驱动：  
 dmesg |grep ttyS* 
-用的 serial8250 的驱动
+用的 serial8250 的驱动,这个驱动比较原始，尝试过用e1000的驱动也可以使用，参考[jslinux带网络功能的内核](https://www.iteye.com/blog/haoningabc-2338061)  
 
-tapper.c 在jslinux内建立tap0，tap_wsh.py 在vm里建立tap设备websockettunt0，基本原理相同.
-jslinux:tap0 --->jslinux:8250驱动的/dev/ttyS1 ---->websocket ---> vm:websockettunt0
+tapper.c 在jslinux内建立tap0，tap_wsh.py 在vm里建立tap设备websockettunt0，基本原理相同.  
+```shell
+jslinux:tap0
+      --->jslinux:8250驱动的/dev/ttyS1 -
+         --->websocket
+              ---> vm:websockettunt0
+```
 
-jslinux:ping 10.0.2.1
-vm:tcpdump -i websockettunt0 
-查看流量
+在jslinux中:   ping 10.0.2.1  
+在server中：tcpdump -i websockettunt0   查看流量  
 
 
 **FAQ：**    
-1.双jslinux网络不通的问题？  
+**1.双jslinux网络不通的问题**？  
 答：两个jslinux-tap浏览器要都在可见的地方，不能放在tab下面，一个没有写显示就不会加载，tap_wsh.py 中的select不是可读写状态  
-2. 服务端的代码在哪？
+**2. 服务端的代码在哪**？
 答：jslinux-tap/websocketstuntap的下面，使用的mod_pywebsocket  
-3.jslinux里面这么和浏览器交互： 
+**3.jslinux里面怎么和浏览器交互**： 
 答：通过textarea，这部分需要内核驱动支持，
 代码在[https://github.com/killinux/jslinux-kernel/](https://github.com/killinux/jslinux-kernel/) 的src/patch_linux-2.6.20里，定义了jsclipboard这个设备，对应在jslinux里的/dev/clipboard
 想把内容从jslinux传到浏览器的textarea就使用
@@ -106,11 +124,11 @@ jslinux里面的网络设备就是通过这个建立的
 ```shell
 cat /dev/clipboard |sh
 ```
-4.如果我想重新编译内核这么办：
+**4.如果我想重新编译内核这么办**：
 答：具体参考 [https://www.iteye.com/blog/haoningabc-2338061](https://www.iteye.com/blog/haoningabc-2338061)
 目前用2.6.20内核需要一些补丁，补丁的代码在代码在 [https://github.com/killinux/jslinux-kernel](https://github.com/killinux/jslinux-kernel)  
 注意linuxstart.bin 和vmlinux-2.6.20.bin要一起重新编译，linuxstart里面定义了从第几字节开始加载内核
-5.如果想重新制作硬盘怎么办：  
+**5.如果想重新制作硬盘怎么办**：  
 答：
 1.把散落的硬盘文件合并成一个,并挂在到本地系统  
 ```shell
@@ -136,27 +154,30 @@ params.hda = { url: "hao/hda%d.bin", block_size: 64, nb_blocks: 912 };
 
 
 **其他可能的想法和todo：**  
-1、改成webrtc的版本，未实现。 
+1、改成webrtc的版本，未实现
 2、单桥多vm互通，已解决  
-3、net0其实没用，用serial2传的数据  
-4、硬盘问题：大文件加载后到indexdb  
-5、回写问题，如何保存，如何同步？  
+3、net0其实没用，用serial2传的数据,需要单独编译网络驱动，验证通过。
+4、硬盘问题：大文件加载后到indexdb  ，计划减少第二次加载时间
+5、线上修改之后如何保存到本地，回写问题，如何保存，如何同步？ 
 6、开机状态迁移，内存怎么保存和移动？ 
 7、hdb ,第二块硬盘怎么建立？  
-8、建立的tap设备，在websocket断掉后怎么自动清除 
+8、server端建立的tap设备，在websocket断掉后怎么自动清除 
+9、后续支持ssh协议
 
 
 **其他说明:**
 
-1.内核建立tap设备通过websocket与底层连接,传输2层协议，  
+1.内核建立tap设备通过websocket与底层连接,传输层协议   
 2.底层python的服务端使用vxlan与openvswitch可以支持集群。   
-3.页面network status显示网络状态，红色网络异常，请刷新页面，
-4.chrome的开发者工具可以查看2层协议.    
+3.页面network status显示网络状态，红色网络异常，请刷新页面  
+4.chrome的开发者工具可以查看传输层协议 
 
 **测试方式**：  
-在命令行输入：    
-ifconfig    
-如果手动建立tap设备  
+在命令行输入：  
+```shell 
+ifconfig  
+```
+如果没有手网络设备，动建立tap设备  
 ```shell
 cat /dev/clipboard |sh  
 ```
@@ -172,3 +193,4 @@ ping 8.8.8.8
 
 ping www.baidu.com
 ```
+理论上两个chrome浏览器可以用jslinux互相ping通
