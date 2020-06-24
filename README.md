@@ -1,18 +1,24 @@
-本文代码在：[https://github.com/killinux/jslinux-tap](https://github.com/killinux/jslinux-tap)
-测试demo在：[http://www.hackernel.com/jslinux/](http://www.hackernel.com/jslinux/)
+
+测试demo在：[http://www.hackernel.com/jslinux/](http://www.hackernel.com/jslinux/)    
+本文代码在：[https://github.com/killinux/jslinux-tap](https://github.com/killinux/jslinux-tap)  
 ![带网络的jslinux](https://img-blog.csdnimg.cn/20200624031118211.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xlYWZyZW5jaGxlYWY=,size_16,color_FFFFFF,t_70#pic_center)
 
-11年很火的jslinux，把linux跑在浏览器上，10年过去了，还有人记得这个么？
-这个代码参考了大神fabrice bellard的代码，版权归作者所有。
-官网是： [https://bellard.org/jslinux](https://bellard.org/jslinux) 这个已经变成wasm的版本，所以目前这个纯js版的作为学习Linux内核的教程还是很好的。
+2011年很火的jslinux，把linux跑在浏览器上，10年过去了，还有人记得这个么？
+
+fabrice bellard官网是： [https://bellard.org/jslinux](https://bellard.org/jslinux) 这个已经变成wasm的版本，代码不可读，所以目前这个纯js版的作为学习Linux内核的教程还是很好的。  
 没混淆的jslinux参考： [https://github.com/levskaya/jslinux-deobfuscated](https://github.com/levskaya/jslinux-deobfuscated)
- 这个没有网络，但是代码可读。
+ 这个没有网络，硬盘也没这么大，但是代码可读。 
  
  
 **我修改了哪些**：
-1.增加了硬盘部分
-硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 [https://www.iteye.com/blog/haoningabc-2240076](https://www.iteye.com/blog/haoningabc-2240076)
-2.增加了网络部分：通过websocket作为server，浏览器中linux的tap设备与服务器端通信
+1.增加了硬盘部分：
+硬盘在hao下面，如果想修改硬盘内容，或生成rootfs 参考 [https://www.iteye.com/blog/haoningabc-2240076](https://www.iteye.com/blog/haoningabc-2240076)  
+理论上如果用indexeddb作为硬盘，硬盘应该可以更大，后续计划把browserfs加上。
+2.增加了网络部分：通过websocket作为server，浏览器中linux的tap设备与服务器端通信，这个地方需要改内核编译的配置，内核的config选项一定要把TUN=yes  
+网络为三个部分：  
+      1.jslinux内部网络是建立tap设备，和/dev/ttyS1设备交互，这是jslinux和浏览器交互的部分  ，类似/dev/clipboard 和浏览器上的textare交互  
+      2.浏览器和server用websocket链接    
+      3.server端linux也是同样原理，建立一个桥，tap设备一端绑在桥上，一端连在websocket上  
 
 
 **把代码运行起来**：
@@ -82,6 +88,11 @@ vm:tcpdump -i websockettunt0
 答：两个jslinux-tap浏览器要都在可见的地方，不能放在tab下面，一个没有写显示就不会加载，tap_wsh.py 中的select不是可读写状态  
 2. 服务端的代码在哪？
 答：jslinux-tap/websocketstuntap的下面，使用的mod_pywebsocket  
+3.jslinux里面这么和浏览器交互： 
+答：
+4.如果我想重新编译内核这么办：
+答：具体参考 [https://www.iteye.com/blog/haoningabc-2338061](https://www.iteye.com/blog/haoningabc-2338061)
+目前用2.6.20内核需要一些补丁，补丁的代码在代码在 [https://github.com/killinux/jslinux-kernel](https://github.com/killinux/jslinux-kernel)  
 
 
 
