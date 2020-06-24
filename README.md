@@ -85,7 +85,7 @@ vm:tcpdump -i websockettunt0
 查看流量
 
 
-**faq：**
+**FAQ：**    
 1.双jslinux网络不通的问题？  
 答：两个jslinux-tap浏览器要都在可见的地方，不能放在tab下面，一个没有写显示就不会加载，tap_wsh.py 中的select不是可读写状态  
 2. 服务端的代码在哪？
@@ -109,6 +109,29 @@ cat /dev/clipboard |sh
 4.如果我想重新编译内核这么办：
 答：具体参考 [https://www.iteye.com/blog/haoningabc-2338061](https://www.iteye.com/blog/haoningabc-2338061)
 目前用2.6.20内核需要一些补丁，补丁的代码在代码在 [https://github.com/killinux/jslinux-kernel](https://github.com/killinux/jslinux-kernel)  
+注意linuxstart.bin 和vmlinux-2.6.20.bin要一起重新编译，linuxstart里面定义了从第几字节开始加载内核
+5.如果想重新制作硬盘怎么办：  
+答：
+1.把散落的硬盘文件合并成一个,并挂在到本地系统  
+```shell
+cd jslinux-tap/hao
+cat hda000000*.bin > hda.bin  
+mount -t ext2 -o loop hda.bin /mnt/jshda  
+cp -r /mnt/jshda jslinux 
+```
+2.在/mnt/jshda里面修改jslinux硬盘内的文件  
+3.再把修改过的硬盘拆分成小块给jslinux使用
+```shell
+split -a 9 -d -b 65536 hda.bin hda      
+for f in hda000000*; do      
+    mv $f $f.bin      
+done 
+```
+这里拆成较快是为了加快浏览器读取硬盘的速度，
+具体读取代码在jslinux-tap/jslinux.js里面
+```javascript
+params.hda = { url: "hao/hda%d.bin", block_size: 64, nb_blocks: 912 };
+```
 
 
 
@@ -144,7 +167,8 @@ ifconfig
 ping 10.0.2.1  
 ```
 测试dns  
+```shell
 ping 8.8.8.8  
 
 ping www.baidu.com
-
+```
