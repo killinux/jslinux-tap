@@ -78,19 +78,22 @@ vm:tcpdump -i websockettunt0
 
 
 **faq：**
-1.双jslinux网络不通的问题？
-解决：两个jslinux-tap浏览器要都在可见的地方，不能放在tab下面，一个没有写显示就不会加载，tap_wsh.py 中的select不是可读写状态
+1.双jslinux网络不通的问题？  
+答：两个jslinux-tap浏览器要都在可见的地方，不能放在tab下面，一个没有写显示就不会加载，tap_wsh.py 中的select不是可读写状态  
+2. 服务端的代码在哪？
+答：jslinux-tap/websocketstuntap的下面，使用的mod_pywebsocket  
 
 
 
-**其他可能的想法：**  
+**其他可能的想法和todo：**  
 1、改成webrtc的版本，未实现。 
 2、单桥多vm互通，已解决  
 3、net0其实没用，用serial2传的数据  
 4、硬盘问题：大文件加载后到indexdb  
 5、回写问题，如何保存，如何同步？  
-6、开机状态迁移，内存怎么保存和移动？？？？  
-hdb ,第二块硬盘怎么建立？  
+6、开机状态迁移，内存怎么保存和移动？ 
+7、hdb ,第二块硬盘怎么建立？  
+8、建立的tap设备，在websocket断掉后怎么自动清除 
 
 
 **其他说明:**
