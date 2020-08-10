@@ -1,4 +1,6 @@
 /mysite/*
 /a.log
 /b.log
+/c.log
+/*.log
 
