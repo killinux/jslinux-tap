@@ -8,6 +8,7 @@
 #tcpdump -i eth0 -e -v -l -w a.pcap
 
 #echo 1 >/proc/sys/net/ipv4/ip_forward  
+#yum install bridge-utils
 #brctl addbr br1
 #brctl stp br1 on
 #ip link set br1 promisc on 
